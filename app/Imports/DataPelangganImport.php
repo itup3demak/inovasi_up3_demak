@@ -7,26 +7,33 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Illuminate\Support\Facades\Session;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class DataPelangganImport implements ToModel, WithStartRow
 {
     use Importable;
 
+    private $importedCount = 0;
+    private $updatedCount = 0;
+
+    public function sheets(): array
+    {
+        return [
+            'Pelanggan' => $this, // Sheet "Pelanggan" akan diproses
+        ];
+    }
+
     public function model(array $row)
     {
-        $existingData = DataPelangganModel::where('idpel', $row[0])->first();
+        $data = $this->getData($row);
+        $existingData = DataPelangganModel::updateOrCreate(
+            ['idpel' => $data['idpel']],
+            $data
+        );
 
-        if ($existingData) {
-            $existingData->update($this->getData($row));
-            Session::flash('error_import_pelanggan', 'data pelanggan sudah ada');
+        if ($existingData->wasRecentlyCreated) {
+            $this->importedCount++;
         } else {
-            if ($this->isDuplicate($row)) {
-                Session::flash('error_import_pelanggan', 'Data sudah ada. Namun jika ada data tambahan lainnya, maka dapat dicek');
-            } else {
-                DataPelangganModel::create($this->getData($row));
-                Session::flash('success_import_pelanggan', 'file excel pelanggan berhasil diimport');
-            }
+            $this->updatedCount++;
         }
 
         return null;
@@ -59,13 +66,15 @@ class DataPelangganImport implements ToModel, WithStartRow
             'tipe_kubikel' => $row[21] ?? '',
         ];
     }
-    private function isDuplicate(array $data)
-    {
-        return DataPelangganModel::where('idpel', $data['0'])->exists();
-    }
 
     public function startRow(): int
     {
         return 2;
+    }
+
+    public function __destruct()
+    {
+        // Kirim flash message setelah proses selesai
+        Session::flash('success_import_pelanggan', "{$this->importedCount} data baru ditambahkan, {$this->updatedCount} data diperbarui.");
     }
 }

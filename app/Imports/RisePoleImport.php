@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class RisePoleImport implements ToModel, WithStartRow
 {
     use Importable;
+    private $importedCount = 0;
+    private $updatedCount = 0;
 
     public function model(array $row)
     {

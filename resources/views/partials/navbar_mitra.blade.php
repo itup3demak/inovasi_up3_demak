@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary p-2" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/keypoint"> SIMPELTAS (Sistem Monitoring Pelanggan Prioritas)
+        <a class="navbar-brand" href="/keypoint">SIMASTER (Sistem Informasi Aset Terintegrasi)
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +21,7 @@
                     {{ auth()->user()->name }}
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item " href="/edit_user_simpeltas/{{ auth()->user()->id }}">Edit</a></li>
+                    <li><a class="dropdown-item " href="/edit_user_simaster/{{ auth()->user()->id }}">Edit</a></li>
                     <li><a class="dropdown-item" href="/logout">Logout</a></li>
                 </ul>
             </div>

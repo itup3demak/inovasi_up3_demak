@@ -2,7 +2,7 @@
 @extends('layout/templateberanda')
 @section('content')
     <div class="container-fluid mt-3">
-        @foreach (['success_import_pelanggan', 'success_import_penyulang', 'success_import_section', 'success_import_trafo', 'success_tambah_dataunit', 'success_tambah_wanotif', 'success_hapus_pelanggan', 'success_hapus_trafo', 'success_hapus_unit', 'success_hapus_wanotif','success_hapus_datazone', 'success_edit_pelanggan', 'success_edit_trafo', 'success_edit_unit', 'success_edit_wanotif',] as $msg)
+        @foreach (['success_import_pelanggan', 'success_import_penyulang', 'success_import_section', 'success_import_trafo', 'success_tambah_dataunit', 'success_tambah_wanotif', 'success_hapus_pelanggan', 'success_hapus_trafo', 'success_hapus_unit', 'success_hapus_wanotif', 'success_hapus_datazone', 'success_edit_pelanggan', 'success_edit_trafo', 'success_edit_unit', 'success_edit_wanotif', 'success_edit_datazone', 'success_import_data_pohon', 'success_import_keypoint', 'success_edit_datapohon', 'success_edit_datatrafo2'] as $msg)
             @if (session($msg))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -10,7 +10,7 @@
                 </div>
             @endif
         @endforeach
-        @foreach (['error_import_pelanggan', 'error_import_penyulang', 'error_import_section', 'error_import_trafo', 'error_tambah_dataunit', 'error_tambah_wanotif', 'error_hapus_pelanggan', 'error_hapus_trafo', 'error_hapus_unit', 'error_hapus_wanotif','error_hapus_datazone', 'error_edit_pelanggan', 'error_edit_trafo', 'error_edit_unit', 'error_edit_wanotif'] as $msg)
+        @foreach (['error_import_pelanggan', 'error_import_penyulang', 'error_import_section', 'error_import_trafo', 'error_tambah_dataunit', 'error_tambah_wanotif', 'error_hapus_pelanggan', 'error_hapus_trafo', 'error_hapus_unit', 'error_hapus_wanotif', 'error_hapus_datazone', 'error_edit_pelanggan', 'error_edit_trafo', 'error_edit_unit', 'error_edit_wanotif', 'error_import_data_pohon', 'error_import_keypoint'] as $msg)
             @if (session($msg))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -608,7 +608,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-2 border border-secondary">
+            {{-- <div class="card mt-2 border border-secondary">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold bg-secondary text-light fs-3" type="button"
@@ -949,7 +949,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="card mt-2 border">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
@@ -1084,6 +1084,257 @@
                     </div>
                 </div>
             </div>
+            <div class="card mt-2 border">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed fw-bold bg-dark text-light fs-3" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseDataPohon" aria-expanded="false"
+                            aria-controls="collapseDataPohon">
+                            Data Pohon
+                        </button>
+                    </h2>
+                    <div id="collapseDataPohon" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <form action="/updating/import_excel_datapohon" enctype="multipart/form-data" method="POST">
+                                @csrf
+                                <div class="form-label fs-2">Upload File Data Pohon</div>
+                                <input type="file" name="file_datapohon" id="file_datapohon" class="form-control"
+                                    required />
+                                <div class="row">
+                                    <button type="submit" id="btn-upload" class="btn btn-primary mt-2 mb-3 col-lg-6">
+                                        <i class="fa-solid fa-upload fa-lg" style="margin-right: 5px"></i>Import Excel
+                                    </button>
+                                    <a href="/file_datapohon/template_datapohon/data_peta_pohon.xlsx"
+                                        class="btn btn-success mt-2 mb-3 col-lg-6">
+                                        <i class="fa-solid fa-download fa-lg" style="margin-right: 5px"></i>Template Excel
+                                    </a>
+                                </div>
+                            </form>
+                            <form action="/updating/hapus_datapohon" method="post">
+                                @csrf
+                                @method('delete')
+                                <a href="#" class="btn btn-danger col-12 mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#modal-delete-datapohon">
+                                    <i class="fa-solid fa-trash fa-lg" style="margin-right: 5px;"></i> Hapus Data Pohon
+                                </a>
+                                <div class="modal modal-blur fade" id="modal-delete-datapohon" tabindex="-1"
+                                    role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                            <div class="modal-status bg-danger"></div>
+                                            <div class="modal-body text-center py-4">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" />
+                                                    <path d="M12 9v4" />
+                                                    <path d="M12 17h.01" />
+                                                </svg>
+                                                <h3>Apakah anda yakin?</h3>
+                                                <div class="text-muted">Untuk menghapus datapohon tersebut</div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="w-100">
+                                                    <div class="row">
+                                                        <div class="col"><a href="#" class="btn w-100"
+                                                                data-bs-dismiss="modal">
+                                                                Cancel
+                                                            </a></div>
+                                                        <div class="col"><button type="submit"
+                                                                class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                                                Delete
+                                                            </button></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="overflow-y: auto;">
+                                    <table class="table-bordered display" id="tabel_data_pohon">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input mt-2"
+                                                                style="position:relative; left:10px;" type="checkbox"
+                                                                id="checklist-datapohon" onclick="checkAllDataPohon()">
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                                <th>No Tiang Section</th>
+                                                <th>Perlu Rabas</th>
+                                                <th>Latitude</th>
+                                                <th>Longitude</th>
+                                                <th>Rayon</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($data_pohon as $pohon)
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="{{ $pohon->id }}" id="flexCheckDefault"
+                                                                    name="checkDataPohon[]">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $pohon->tiang_section }}</td>
+                                                    <td>{{ $pohon->perlu_rabas }}</td>
+                                                    <td>{{ $pohon->latitude }}</td>
+                                                    <td>{{ $pohon->longitude }}</td>
+                                                    <td>{{ $pohon->rayon }}</td>
+                                                    <td>
+                                                        <a style="cursor: pointer" class="text-secondary"
+                                                            href="/updating/editdatapohon/{{ $pohon->id }}">
+                                                            <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-2 border">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed fw-bold bg-pink text-light fs-3" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#trafo25kVa50kVa" aria-expanded="false"
+                            aria-controls="trafo25kVa50kVa">
+                            Trafo 25kVa & 50 kVa
+                        </button>
+                    </h2>
+                    <div id="trafo25kVa50kVa" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <form method="post" action="/updating/import_excel_datatrafo" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-label fs-2">Upload File Data Trafo</div>
+                                <input type="file" name="file_datatrafo" id="file_datatrafo" class="form-control"
+                                    required />
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary mt-2 mb-3 col-lg-6"><i
+                                            class="fa-solid fa-upload fa-lg" style="margin-right: 5px"></i>Import
+                                        Excel</button>
+                                    <a href="/file_datapohon/template_datazone/data_zone_non_reclose_PWI_edit.xlsx"
+                                        class="btn btn-success mt-2 mb-3 col-lg-6"><i class="fa-solid fa-download fa-lg"
+                                            style="margin-right: 5px"></i>Template
+                                        Excel</a>
+                                </div>
+                            </form>
+                            <form action="/updating/hapus_datapohon" method="post">
+                                @csrf
+                                @method('delete')
+                                <a href="#" class="btn btn-danger col-12 mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#modal-delete-datapohon">
+                                    <i class="fa-solid fa-trash fa-lg" style="margin-right: 5px;"></i> Hapus Data Zone
+                                </a>
+                                <div class="modal modal-blur fade" id="modal-delete-datapohon" tabindex="-1"
+                                    role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                            <div class="modal-status bg-danger"></div>
+                                            <div class="modal-body text-center py-4">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" />
+                                                    <path d="M12 9v4" />
+                                                    <path d="M12 17h.01" />
+                                                </svg>
+                                                <h3>Apakah anda yakin?</h3>
+                                                <div class="text-muted">Untuk menghapus datapohon tersebut</div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="w-100">
+                                                    <div class="row">
+                                                        <div class="col"><a href="#" class="btn w-100"
+                                                                data-bs-dismiss="modal">
+                                                                Cancel
+                                                            </a></div>
+                                                        <div class="col"><button type="submit"
+                                                                class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                                                Delete
+                                                            </button></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="overflow-y: auto;">
+                                    <table class="table-bordered display" id="tabel_data_trafo2">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input mt-2"
+                                                                style="position:relative; left:10px;" type="checkbox"
+                                                                id="checklist-datapohon" onclick="checkAllDataPohon()">
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                                <th>Rayon</th>
+                                                <th>Nomor Tiang</th>
+                                                <th>Nomor Gardu</th>
+                                                <th>x1</th>
+                                                <th>x2</th>
+                                                <th>n</th>
+                                                <th>perhitungan_beban</th>
+                                                <th>klasifikasi_beban</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($data_trafo2 as $trafo)
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    value="{{ $trafo->id }}" id="flexCheckDefault"
+                                                                    name="checkDataPohon[]">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $trafo->rayon }}</td>
+                                                    <td>{{ $trafo->nomor_tiang }}</td>
+                                                    <td>{{ $trafo->nomor_gardu }}</td>
+                                                    <td>{{ $trafo->x1 }}</td>
+                                                    <td>{{ $trafo->x2 }}</td>
+                                                    <td>{{ $trafo->n }}</td>
+                                                    <td>{{ $trafo->perhitungan_beban }}</td>
+                                                    <td>{{ $trafo->klasifikasi_beban }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -1099,6 +1350,8 @@
             template_tabel('#tabel_data_trafo');
             template_tabel('#tabel_data_unit');
             template_tabel('#tabel_data_zone');
+            template_tabel('#tabel_data_pohon');
+            template_tabel('#tabel_data_trafo2');
             template_tabel('#tabel_data_wanotif');
         });
     </script>
@@ -1122,6 +1375,7 @@
             checkboxGroup("checklist-trafo", 'input[name="checkTrafo[]"]');
             checkboxGroup("checklist-wanotif", 'input[name="checkWANotif[]"]');
             checkboxGroup("checklist-datazone", 'input[name="checkDataZone[]"]');
+            checkboxGroup("checklist-datapohon", 'input[name="checkDataPohon[]"]');
             checkboxGroup("checklist-dataunit", 'input[name="checkDataUnit[]"]');
         });
     </script>
@@ -1143,5 +1397,30 @@
                 idunit.value = '52554'
             }
         })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#btn-upload').on('click', function() {
+                let formData = new FormData($('#form-upload-datapohon')[0]);
+                $('#status-upload').html('<span class="text-info">Uploading...</span>');
+
+                $.ajax({
+                    url: '/updating/import_excel_datapohon',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#status-upload').html('<span class="text-success">' + response
+                            .message + '</span>');
+                    },
+                    error: function(xhr, status, error) {
+                        $('#status-upload').html('<span class="text-danger">Error: ' + xhr
+                            .responseText + '</span>');
+                    }
+                });
+            });
+        });
     </script>
 @endsection

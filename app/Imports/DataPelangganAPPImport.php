@@ -14,30 +14,27 @@ use Illuminate\Support\Facades\Session;
 class DataPelangganAPPImport implements ToModel, WithStartRow, WithMultipleSheets
 {
     use Importable;
-
-    protected $unit_ulp;
-
-    public function __construct($unit_ulp)
+    private $importedCount = 0;
+    private $updatedCount = 0;
+    public function sheets(): array
     {
-        $this->unit_ulp = $unit_ulp;
+        return [
+            'Worksheet' => $this,
+        ];
     }
+
     public function model(array $row)
     {
-        if (empty($row[3])) { // Asumsi kolom ID pelanggan berada di index 3
-            return null; // Lewati baris
-        }
-        $existingData = PelangganAPPModel::where('id_pelanggan', $row[3])->first(); // Ubah index sesuai urutan yang benar
+        $data = $this->getData($row);
+        $existingData = PelangganAPPModel::updateOrCreate(
+            ['id_pelanggan' => $data['id_pelanggan']],
+            $data
+        );
 
-        if ($existingData) {
-            $existingData->update($this->getData($row));
-            Session::flash('error_import_pelangganAPP', 'Data pelangganAPP sudah ada dan telah diperbarui.');
+        if ($existingData->wasRecentlyCreated) {
+            $this->importedCount++;
         } else {
-            if ($this->isDuplicate($row)) {
-                Session::flash('error_import_pelangganAPP', 'Data sudah ada. Tidak ada perubahan yang dilakukan.');
-            } else {
-                PelangganAPPModel::create($this->getData($row));
-                Session::flash('success_import_pelangganAPP', 'Data pelangganAPP berhasil diimport.');
-            }
+            $this->updatedCount++;
         }
 
         return null;
@@ -49,37 +46,33 @@ class DataPelangganAPPImport implements ToModel, WithStartRow, WithMultipleSheet
     private function getData(array $row)
     {
         return [
-            'id_pelanggan' => $row[3] ?? '',
-            'nama_pelanggan' => $row[4] ?? '',
+            'tanggal_pasang' => $row[0] ?? '',
+            'id_pelanggan' => $row[1] ?? '',
+            'nama_pelanggan' => $row[2] ?? '',
+            'tarif' => $row[3] ?? '',
+            'daya' => $row[4] ?? '',
             'alamat' => $row[5] ?? '',
-            'tarif_daya' => $row[6] ?? '',
-            'nomor_meter' => $row[7] ?? '',
-            'ukuran_mcb' => $row[8] ?? '',
-            'no_segel' => $row[10] ?? '',
-            'unit_ulp'  => $this->unit_ulp ?? '',
+            'latitude' => $row[6] ?? '',
+            'longitude' => $row[7] ?? '',
+            'jenis_meter' => $row[8] ?? '',
+            'nomor_meter' => $row[9] ?? '',
+            'merk_meter' => $row[10] ?? '',
+            'tahun_meter' => $row[11] ?? '',
+            'merk_mcb' => $row[12] ?? '',
+            'ukuran_mcb' => $row[13] ?? '',
+            'no_segel' => $row[14] ?? '',
+            'no_gardu' => $row[15] ?? '',
+            'sr_deret' => $row[16] ?? '',
+            'nama_petugas' => $row[17] ?? '',
+            'catatan' => $row[18] ?? '',
         ];
     }
-
-    /**
-     * Periksa apakah data sudah ada di dalam database.
-     */
-    private function isDuplicate(array $row)
-    {
-        return PelangganAPPModel::where('id_pelanggan', $row[3])->exists(); // Gunakan index 3 sesuai dengan urutan excel
-    }
-
-    public function sheets(): array
-    {
-        return [
-            'MCB ON' => $this
-        ];
-    }
-
-    /**
-     * Tentukan baris awal untuk membaca data dari excel (skip header).
-     */
     public function startRow(): int
     {
-        return 3; // Asumsi header ada di baris pertama, mulai membaca dari baris kedua
+        return 6;
+    }
+    public function __destruct()
+    {
+        Session::flash('success_import_kelengkapan_data_aset', "{$this->importedCount} data baru ditambahkan");
     }
 }

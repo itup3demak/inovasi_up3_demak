@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class DataZoneImport implements ToModel, WithStartRow, WithMultipleSheets
 {
     use Importable;
+    private $importedCount = 0;
+    private $updatedCount = 0;
     public function sheets(): array
     {
         return [
@@ -21,18 +23,16 @@ class DataZoneImport implements ToModel, WithStartRow, WithMultipleSheets
 
     public function model(array $row)
     {
-        $existingData = DataZoneModel::where('keypoint', $row[5])->first();
+        $data = $this->getData($row);
+        $existingData = DataZoneModel::updateOrCreate(
+            ['keypoint' => $data['keypoint']],
+            $data
+        );
 
-        if ($existingData) {
-            $existingData->update($this->getData($row));
-            Session::flash('error_import_keypoint', 'data keypoint sudah ada');
+        if ($existingData->wasRecentlyCreated) {
+            $this->importedCount++;
         } else {
-            if ($this->isDuplicate($row)) {
-                Session::flash('error_import_keypoint', 'Data sudah ada. Namun jika ada data tambahan lainnya, maka dapat dicek');
-            } else {
-                DataZoneModel::create($this->getData($row));
-                Session::flash('success_import_keypoint', 'file excel keypoint berhasil diimport');
-            }
+            $this->updatedCount++;
         }
 
         return null;
@@ -49,13 +49,12 @@ class DataZoneImport implements ToModel, WithStartRow, WithMultipleSheets
             'google_maps' => $row[10] ?? '',
         ];
     }
-    private function isDuplicate(array $data)
-    {
-        return DataZoneModel::where('keypoint', $data['5'])->exists();
-    }
-
     public function startRow(): int
     {
         return 3;
+    }
+    public function __destruct()
+    {
+        Session::flash('success_import_keypoint', "{$this->importedCount} data baru ditambahkan");
     }
 }

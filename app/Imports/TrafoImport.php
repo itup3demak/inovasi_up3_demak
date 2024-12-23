@@ -14,21 +14,21 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 class TrafoImport implements ToModel, WithStartRow
 {
     use Importable;
+    private $importedCount = 0;
+    private $updatedCount = 0;
 
     public function model(array $row)
     {
-        $existingData = TrafoModel::where('no_tiang', $row[4])->first();
+        $data = $this->getData($row);
+        $existingData = TrafoModel::updateOrCreate(
+            ['no_tiang' => $data['no_tiang']],
+            $data
+        );
 
-        if ($existingData) {
-            $existingData->update($this->getData($row));
-            Session::flash('error_import_trafo', 'data trafo sudah ada');
+        if ($existingData->wasRecentlyCreated) {
+            $this->importedCount++;
         } else {
-            if ($this->isDuplicate($row)) {
-                Session::flash('error_import_trafo', 'Data sudah ada. Namun jika ada data tambahan lainnya, maka dapat dicek');
-            } else {
-                TrafoModel::create($this->getData($row));
-                Session::flash('success_import_trafo', 'file excel trafo berhasil diimport');
-            }
+            $this->updatedCount++;
         }
 
         return null;
@@ -72,9 +72,9 @@ class TrafoImport implements ToModel, WithStartRow
             'kesesuaian' => $row[32] ?? '',
         ];
     }
-    private function isDuplicate(array $data)
+    public function __destruct()
     {
-        return TrafoModel::where('no_tiang', $data['4'])->exists();
+        Session::flash('success_import_trafo', "{$this->importedCount} data baru ditambahkan");
     }
 
     public function startRow(): int

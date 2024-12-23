@@ -15,6 +15,7 @@ class Datazone extends Migration
     {
         Schema::create('data_zone', function (Blueprint $table) {
             $table->id();
+            $table->string('feeder')->nullable();
             $table->string('keypoint')->nullable();
             $table->string('jarak')->nullable();
             $table->string('latitude')->nullable();

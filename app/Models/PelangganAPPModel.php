@@ -10,6 +10,6 @@ class PelangganAPPModel extends Model
     use HasFactory;
     protected $table = 'entri_pelanggan_app';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_pelanggan', 'nama_pelanggan', 'tarif_daya', 'alamat', 'latitude', 'longitude', 'jenis_meter', 'merk_meter', 'tahun_meter', 'nomor_meter', 'merk_mcb', 'ukuran_mcb', 'no_segel','no_gardu','sr_deret','catatan', 'unit_ulp'];
+    protected $fillable = ['tanggal_pasang','id_pelanggan', 'nama_pelanggan', 'tarif', 'daya', 'alamat', 'latitude', 'longitude', 'jenis_meter', 'merk_meter', 'tahun_meter', 'nomor_meter', 'merk_mcb', 'no_segel','no_gardu','sr_deret','catatan', 'nama_petugas'];
     public $timestamps = true;
 }

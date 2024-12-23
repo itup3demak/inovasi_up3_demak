@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div class="text-center text-muted mt-3">
-                            Don't have account yet? <a href="/register_user" tabindex="-1">Sign up</a>
+                            Don't have account yet? <a href="/register_app_simaster" tabindex="-1">Sign up</a>
                         </div>
                     </div>
                 </div>

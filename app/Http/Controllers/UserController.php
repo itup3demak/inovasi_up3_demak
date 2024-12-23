@@ -13,17 +13,17 @@ class UserController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Login';
+        $data['title'] = 'SIMASTER';
         if (Auth::check()) {
             return redirect('/beranda');
         } else {
             return view('login', $data);
         }
     }
-    public function register_app_simpeltas()
+    public function register_app_simaster()
     {
         $data['title'] = 'Registrasi';
-        return view('register_app_simpeltas', $data);
+        return view('register_app_simaster', $data);
     }
     public function register_user()
     {
@@ -88,7 +88,7 @@ class UserController extends Controller
         // Auth::login($user);
         return redirect('/');
     }
-    public function edit_user_simpeltas($id)
+    public function edit_user_simaster($id)
     {
         $layout = '';
     
@@ -111,15 +111,15 @@ class UserController extends Controller
         }
     
         $data = [
-            'title' => 'Edit User Simpeltas',
+            'title' => 'Edit User SIMASTER',
             'user' => User::find($id),
             'layout' => $layout
         ];
     
-        return view('edit_user_simpeltas', $data);
+        return view('edit_user_simaster', $data);
     }
     
-    public function proses_edit_user_simpeltas(Request $request, $id)
+    public function proses_edit_user_simaster(Request $request, $id)
     {
         $message = [
             'required' => ':attribute harus diisi',

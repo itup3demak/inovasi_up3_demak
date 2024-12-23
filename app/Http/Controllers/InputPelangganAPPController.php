@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\APPExport;
 use App\Imports\DataGIImport;
 use App\Imports\DataPelangganAPPImport;
+use App\Imports\DataPelangganImport;
 use App\Imports\ManajemenAsetImport;
 use App\Models\DataGIModel;
 use App\Models\DataPelangganModel;
@@ -44,6 +45,7 @@ class InputPelangganAPPController extends Controller
             'title' => 'Manajemen Aset Jaringan',
             'data_aset' => ManajemenAset::all(),
             'data_gi' => DataGIModel::all(),
+            'data_pelanggan_app' => PelangganAPPModel::all(),
             'total_daya_terpakai' => DataGIModel::sum('daya_terpakai')
         ];
 
@@ -54,6 +56,7 @@ class InputPelangganAPPController extends Controller
         $data = [
             'title' => 'Map Aset',
             'data_aset' => ManajemenAset::all(),
+            'data_pelanggan_app' => PelangganAPPModel::all(),
         ];
         return view('beranda_koordinator.map_aset', $data);
     }
@@ -201,6 +204,15 @@ class InputPelangganAPPController extends Controller
 
         return redirect('/manajemen_aset_jaringan');
     }
+    public function import_excel_kelengkapan_data_aset(Request $request)
+    {
+        $file = $request->file('file_kelengkapan_data_aset');
+        $nama_file = rand() . $file->getClientOriginalName();
+        $file->move('file_kelengkapan_data_aset', $nama_file);
+        Excel::import(new DataPelangganAPPImport, public_path('/file_kelengkapan_data_aset/' . $nama_file));
+
+        return redirect('/manajemen_aset_jaringan');
+    }
     public function export_excel_app(Request $request)
     {
         date_default_timezone_set('Asia/Jakarta');
@@ -278,7 +290,7 @@ class InputPelangganAPPController extends Controller
         } else {
             Session::flash('error_hapus_pelanggan', 'Data gagal dihapus');
         }
-        return redirect('/koordinator');
+        return redirect('/manajemen_aset_jaringan');
     }
     public function edit_pelanggan_app_user($id_pelanggan)
     {

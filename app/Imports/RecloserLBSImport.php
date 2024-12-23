@@ -12,6 +12,9 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class RecloserLBSImport implements ToModel, WithStartRow, WithMultipleSheets
 {
     use Importable;
+    private $importedCount = 0;
+    private $updatedCount = 0;
+
     public function sheets(): array
     {
         return [
@@ -23,18 +26,16 @@ class RecloserLBSImport implements ToModel, WithStartRow, WithMultipleSheets
 
     public function model(array $row)
     {
-        $existingData = MitraModel::where('nomor_tiang', $row[2])->first();
+        $data = $this->getData($row);
+        $existingData = MitraModel::updateOrCreate(
+            ['nomor_tiang' => $data['nomor_tiang']],
+            $data
+        );
 
-        if ($existingData) {
-            $existingData->update($this->getData($row));
-            Session::flash('error_import_keypoint', 'data keypoint sudah ada');
+        if ($existingData->wasRecentlyCreated) {
+            $this->importedCount++;
         } else {
-            if ($this->isDuplicate($row)) {
-                Session::flash('error_import_keypoint', 'Data sudah ada. Namun jika ada data tambahan lainnya, maka dapat dicek');
-            } else {
-                MitraModel::create($this->getData($row));
-                Session::flash('success_import_keypoint', 'file excel keypoint berhasil diimport');
-            }
+            $this->updatedCount++;
         }
 
         return null;
@@ -50,13 +51,13 @@ class RecloserLBSImport implements ToModel, WithStartRow, WithMultipleSheets
             'status_keypoint' => $row[3] ?? '',
         ];
     }
-    private function isDuplicate(array $data)
-    {
-        return MitraModel::where('nomor_tiang', $data['2'])->exists();
-    }
 
     public function startRow(): int
     {
         return 2;
+    }
+    public function __destruct()
+    {
+        Session::flash('success_import_keypoint', "{$this->importedCount} data baru ditambahkan");
     }
 }

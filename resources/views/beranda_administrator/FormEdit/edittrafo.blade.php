@@ -2,7 +2,7 @@
 @section('content')
     <div class="container-fluid mt-5">
         <div class="card shadow-lg border-0 rounded">
-            <div class="card-header bg-info text-white text-center rounded-top">
+            <div class="card-header bg-success text-white text-center rounded-top">
                 <h3 class="mb-0">Edit Trafo</h3>
             </div>
             <div class="card-body p-4">
